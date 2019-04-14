@@ -1,0 +1,247 @@
+Imports System
+Imports System.Collections
+Imports System.IO
+Imports System.Net
+Imports System.Runtime.CompilerServices
+Imports System.Security.Cryptography
+Imports System.Text
+Imports System.Text.RegularExpressions
+Imports Microsoft.VisualBasic
+Imports Microsoft.VisualBasic.CompilerServices
+
+Namespace N_L_Team
+    ' Token: 0x02000008 RID: 8
+    Friend Module Class6
+        ' Token: 0x06000014 RID: 20 RVA: 0x000023D8 File Offset: 0x000005D8
+        Public Function smethod_0(object_0 As Object, object_1 As Object) As Object
+            Dim result As Object = False
+            Dim stringBuilder As StringBuilder = New StringBuilder()
+            Dim values As String() = New String() {"{""_uuid"":""", Guid.NewGuid().ToString().ToUpper(), """,""password"":""", Conversions.ToString(object_1), """,""username"":""", Conversions.ToString(object_0), """,""device_id"":""", Guid.NewGuid().ToString().ToUpper(), """,""from_reg"":false,""_csrftoken"":""missing"",""login_attempt_count"":0}"}
+            Dim text As String = String.Concat(values)
+            text = String.Format("{0}.{1}", Class6.smethod_4(text, Class6.string_12), text)
+            stringBuilder.AppendLine("--" + Class6.string_15)
+            stringBuilder.AppendLine("Content-Disposition: form-data; name=""signed_body""")
+            stringBuilder.AppendLine()
+            stringBuilder.AppendLine(text)
+            stringBuilder.AppendLine("--" + Class6.string_15)
+            stringBuilder.AppendLine("Content-Disposition: form-data; name=""ig_sig_key_version""")
+            stringBuilder.AppendLine()
+            stringBuilder.AppendLine("4")
+            stringBuilder.Append("--" + Class6.string_15 + "--")
+            Dim text2 As String = Class6.smethod_1(stringBuilder)
+            Dim flag As Boolean = text2.Contains("logged_in_user")
+            If flag Then
+                result = True
+            Else
+                Dim flag2 As Boolean = text2.Contains("checkpoint_required")
+                If flag2 Then
+                    Interaction.MsgBox("Please Confirm Email/number Phone and try again", MsgBoxStyle.Critical, "Secure")
+                Else
+                    Interaction.MsgBox("Incorrect Username or Password ,  Please check your username/password and try again", MsgBoxStyle.Critical, "Incorrect Info")
+                End If
+            End If
+            Dim flag3 As Boolean = text2.Contains("The username you entered doesn't appear to belong to an account. Please check your username and try again.")
+            If flag3 Then
+                Interaction.MsgBox("The username you entered doesn't appear to belong to an account. Please check your username and try again.", MsgBoxStyle.Critical, "incorrect username")
+            End If
+            Dim flag4 As Boolean = text2.Contains("The password you entered is incorrect. Please try again")
+            If flag4 Then
+                Interaction.MsgBox("The password you entered is incorrect. Please try again", MsgBoxStyle.Critical, "Passowrd incorrect")
+            End If
+            Return result
+        End Function
+
+        ' Token: 0x06000015 RID: 21 RVA: 0x000025C4 File Offset: 0x000007C4
+        Public Function smethod_1(stringBuilder_0 As StringBuilder) As String
+            Dim result As String = Nothing
+            Try
+                Dim bytes As Byte() = Encoding.UTF8.GetBytes(stringBuilder_0.ToString())
+                Dim httpWebRequest As HttpWebRequest = CType(WebRequest.Create(Class6.string_14 + "accounts/login/"), HttpWebRequest)
+                httpWebRequest.AutomaticDecompression = DecompressionMethods.GZip
+                httpWebRequest.Method = "POST"
+                httpWebRequest.Host = Class6.string_8
+                httpWebRequest.UserAgent = Class6.string_10
+                httpWebRequest.Headers.Add("Accept-Language", "en;q=0.9")
+                httpWebRequest.KeepAlive = True
+                httpWebRequest.Proxy = Nothing
+                httpWebRequest.ContentType = "multipart/form-data; boundary=" + Class6.string_15
+                httpWebRequest.ContentLength = CLng(bytes.Length)
+                httpWebRequest.CookieContainer = Class6.cookieContainer_0
+                Dim requestStream As Stream = httpWebRequest.GetRequestStream()
+                requestStream.Write(bytes, 0, bytes.Length)
+                requestStream.Close()
+                Dim httpWebResponse As HttpWebResponse = CType(httpWebRequest.GetResponse(), HttpWebResponse)
+                Using streamReader As StreamReader = New StreamReader(httpWebResponse.GetResponseStream())
+                    result = streamReader.ReadToEnd()
+                End Using
+                Try
+                    Try
+                        Try
+                            For Each obj As Object In httpWebResponse.Cookies
+                                Dim objectValue As Object = RuntimeHelpers.GetObjectValue(obj)
+                                Dim objectValue2 As Object = RuntimeHelpers.GetObjectValue(RuntimeHelpers.GetObjectValue(objectValue))
+                                Dim objectValue3 As Object = RuntimeHelpers.GetObjectValue(RuntimeHelpers.GetObjectValue(RuntimeHelpers.GetObjectValue(RuntimeHelpers.GetObjectValue(RuntimeHelpers.GetObjectValue(objectValue2)))))
+                                Class6.string_13 = Class6.string_13 + objectValue3.ToString() + ";"
+                            Next
+                        Finally
+                            Dim enumerator As IEnumerator
+                            If TypeOf GetEnumerator(enumerator) Is IDisposable Then
+                                TryCast(enumerator, IDisposable).Dispose()
+                            End If
+                        End Try
+                    Finally
+                        Dim enumerator2 As IEnumerator
+                        Dim flag As Boolean = TypeOf enumerator2 Is IDisposable
+                        If flag Then
+                            TryCast(enumerator2, IDisposable).Dispose()
+                        End If
+                    End Try
+                Finally
+                End Try
+                httpWebResponse.Close()
+            Catch ex As WebException
+                Using streamReader2 As StreamReader = New StreamReader(ex.Response.GetResponseStream())
+                    result = streamReader2.ReadToEnd()
+                    streamReader2.Close()
+                End Using
+            End Try
+            Return result
+        End Function
+
+        Private Function GetEnumerator(enumerator As IEnumerator) As IEnumerator
+            Return enumerator
+        End Function
+
+        ' Token: 0x06000016 RID: 22 RVA: 0x00002870 File Offset: 0x00000A70
+        Public Function smethod_2(cookieContainer_1 As CookieContainer) As Object
+            Dim result As Object = False
+            Try
+                Dim bytes As Byte() = Encoding.UTF8.GetBytes("")
+                Dim httpWebRequest As HttpWebRequest = CType(WebRequest.Create(Class6.string_14 + "accounts/logout/"), HttpWebRequest)
+                httpWebRequest.AutomaticDecompression = DecompressionMethods.GZip
+                httpWebRequest.Method = "POST"
+                httpWebRequest.Host = Class6.string_8
+                httpWebRequest.UserAgent = Class6.string_10
+                httpWebRequest.Headers.Add("Accept-Language", "en;q=0.9")
+                httpWebRequest.KeepAlive = True
+                httpWebRequest.Proxy = Nothing
+                httpWebRequest.ContentLength = CLng(bytes.Length)
+                httpWebRequest.CookieContainer = cookieContainer_1
+                Dim requestStream As Stream = httpWebRequest.GetRequestStream()
+                requestStream.Write(bytes, 0, bytes.Length)
+                requestStream.Close()
+                Dim httpWebResponse As HttpWebResponse = CType(httpWebRequest.GetResponse(), HttpWebResponse)
+                Using streamReader As StreamReader = New StreamReader(httpWebResponse.GetResponseStream())
+                    Interaction.MsgBox(streamReader.ReadToEnd(), MsgBoxStyle.OkOnly, Nothing)
+                    Dim flag As Boolean = streamReader.ReadToEnd().Contains("{""status"": ""ok""}")
+                    If flag Then
+                        result = True
+                    End If
+                    streamReader.Close()
+                End Using
+                httpWebResponse.Close()
+            Catch ex As Exception
+                result = False
+            End Try
+            Return result
+        End Function
+
+        ' Token: 0x06000017 RID: 23 RVA: 0x000029F0 File Offset: 0x00000BF0
+        Public Function smethod_3() As Object
+            Dim result As Object = False
+            Dim httpWebRequest As HttpWebRequest = CType(WebRequest.Create("https://i.instagram.com/api/v1/accounts/current_user/?edit=true"), HttpWebRequest)
+            httpWebRequest.Method = "GET"
+            httpWebRequest.KeepAlive = True
+            httpWebRequest.UserAgent = Class6.string_9
+            httpWebRequest.Proxy = Nothing
+            httpWebRequest.CookieContainer = Class6.cookieContainer_0
+            Try
+                Dim httpWebResponse As HttpWebResponse = CType(httpWebRequest.GetResponse(), HttpWebResponse)
+                Using streamReader As StreamReader = New StreamReader(httpWebResponse.GetResponseStream())
+                    Dim input As String = streamReader.ReadToEnd()
+                    Class6.string_0 = Regex.Match(input, "pk"": (.*?),").Groups(1).Value
+                    Class6.string_5 = Regex.Match(input, "email"": ""(.*?)""").Groups(1).Value
+                    Class6.string_3 = Regex.Match(input, "phone_number"": ""(.*?)""").Groups(1).Value
+                    result = True
+                End Using
+            Catch ex As WebException
+                result = False
+                Using New StreamReader(ex.Response.GetResponseStream())
+                End Using
+            End Try
+            Return result
+        End Function
+
+        ' Token: 0x06000018 RID: 24 RVA: 0x00002B34 File Offset: 0x00000D34
+        Public Function smethod_4(string_16 As String, string_17 As String) As String
+            Dim num As Integer = 0
+            Dim stringBuilder As StringBuilder = New StringBuilder()
+            Dim hmacsha As HMACSHA256 = New HMACSHA256(Encoding.UTF8.GetBytes(string_17))
+            hmacsha.ComputeHash(Encoding.UTF8.GetBytes(string_16))
+            Dim hash As Byte() = hmacsha.Hash
+            Dim num2 As Integer = hash.Length - 1
+            Dim i As Integer = 0
+            While i <= num
+                Dim b As Byte = hash(i)
+                stringBuilder.Append(b.ToString("x2"))
+                i += 1
+                num = num2
+            End While
+            Return stringBuilder.ToString()
+        End Function
+
+        ' Token: 0x0400000B RID: 11
+        Public string_0 As String = String.Empty
+
+        ' Token: 0x0400000C RID: 12
+        Public string_1 As String = String.Empty
+
+        ' Token: 0x0400000D RID: 13
+        Public string_2 As String = String.Empty
+
+        ' Token: 0x0400000E RID: 14
+        Public string_3 As String = String.Empty
+
+        ' Token: 0x0400000F RID: 15
+        Public string_4 As String = String.Empty
+
+        ' Token: 0x04000010 RID: 16
+        Public string_5 As String = String.Empty
+
+        ' Token: 0x04000011 RID: 17
+        Public string_6 As String = String.Empty
+
+        ' Token: 0x04000012 RID: 18
+        Public string_7 As String = String.Empty
+
+        ' Token: 0x04000013 RID: 19
+        Public cGbvuvYpu As String = String.Empty
+
+        ' Token: 0x04000014 RID: 20
+        Public string_8 As String = "i.instagram.com"
+
+        ' Token: 0x04000015 RID: 21
+        Public string_9 As String = "Instagram 6.11.2 Android (19/4.4.4; 480dpi; 1080x1776; Sony; C6603; C6603; qcom; nl_NL)"
+
+        ' Token: 0x04000016 RID: 22
+        Public string_10 As String = "Instagram 6.11.2 Android (19/4.4.4; 480dpi; 1080x1776; Sony; C6603; C6603; qcom; nl_NL)"
+
+        ' Token: 0x04000017 RID: 23
+        Public string_11 As String = "5ad7d6f013666cc93c88fc8af940348bd067b68f0dce3c85122a923f4f74b251"
+
+        ' Token: 0x04000018 RID: 24
+        Public string_12 As String = "fc4720e1bf9d79463f62608c86fbddd374cc71bbfb98216b52e3f75333bd130d"
+
+        ' Token: 0x04000019 RID: 25
+        Public cookieContainer_0 As CookieContainer = New CookieContainer()
+
+        ' Token: 0x0400001A RID: 26
+        Public string_13 As String = String.Empty
+
+        ' Token: 0x0400001B RID: 27Mozilla/5.0 (iPhone; CPU iPhone OS 12_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/16A366 Instagram 63.0.0.14.94 (iPhone8,2; iOS 12_0; ru_RU; ru-RU; scale=2.61; gamut=normal; 1080x1920)
+        Public string_14 As String = "https://i.instagram.com/api/v1/"
+
+        ' Token: 0x0400001C RID: 28
+        Public string_15 As String = Guid.NewGuid().ToString().ToUpper()
+    End Module
+End Namespace

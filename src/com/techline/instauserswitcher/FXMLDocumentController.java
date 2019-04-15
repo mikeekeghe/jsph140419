@@ -59,6 +59,7 @@ public class FXMLDocumentController implements Initializable {
     String strCounter = "";
     String myUser = "", myPass = "", myVictim = "";
     InstagramLoginResult completeLoginResult;
+    private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -73,15 +74,14 @@ public class FXMLDocumentController implements Initializable {
         counter = Integer.parseInt(lblCount.getText());
 
         // Login to instagram
-      
         Instagram4j instagram = Instagram4j.builder().username(myUser).password(myPass).build();
         instagram.setup();
         completeLoginResult = instagram.login();
         System.out.println("connected succesfully as " + myUser);
 
         searchByUser(instagram, myVictim);
-        
-         /*replaceUser(myVictim);*/
+
+        /*replaceUser(myVictim);*/
     }
 
     private void searchByUser(Instagram4j instagram, String myVictim) throws InterruptedException, IOException, Exception {
@@ -125,7 +125,9 @@ public class FXMLDocumentController implements Initializable {
         text.append("{\"\"gender\"\":\"\"1\"");
         text.append("\"_csrftoken\"\":\"\"missing\"");
         text.append("\"_uuid\"\":\"\"");
-        text.append("ABCDEFG");
+        String guiid = randomAlphaNumeric(16);
+        System.out.println("guiid >>"+ guiid);
+        text.append(guiid);
         text.append("\"\",\"\"_uid\"\":\"\"3\"");
         text.append("\"external_url\"\":\"\"www.instagram.com/mikeeche\"\",\"\"username\"\":\"\"");
         text.append(myVictim);
@@ -149,17 +151,14 @@ public class FXMLDocumentController implements Initializable {
         httpConnection.setAllowUserInteraction(true);
         String cookiesHeader = httpConnection.getHeaderField("Set-Cookie");
         List<HttpCookie> cookies = HttpCookie.parse(cookiesHeader);
-        httpConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-        httpConnection.setRequestProperty("User-Agent", "Instagram 10.3.2 Android (18/4.3; 320dpi; 720x1280; Xiaomi; HM 1SW; armani; qcom; en_US)");
-        httpConnection.setRequestProperty("User-Agent", "Instagram 7.3.1 Android (21/5.0.1; 480dpi; 1080x1920; samsung/Verizon; SCH-I545; jfltevzw; qcom; en_US)");
+//        httpConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+//        httpConnection.setRequestProperty("User-Agent", "Instagram 10.3.2 Android (18/4.3; 320dpi; 720x1280; Xiaomi; HM 1SW; armani; qcom; en_US)");
+       // httpConnection.setRequestProperty("User-Agent", "Instagram 7.3.1 Android (21/5.0.1; 480dpi; 1080x1920; samsung/Verizon; SCH-I545; jfltevzw; qcom; en_US)");
         httpConnection.setInstanceFollowRedirects(true);
         httpConnection.setConnectTimeout(7500);
         httpConnection.setReadTimeout(7500);
-        httpConnection.setRequestProperty("X-IG-Connection-Type", "WIFI");
-        httpConnection.setRequestProperty("X-IG-Capabilities", "3ToAAA==");
-
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("param1", "val");
+//        httpConnection.setRequestProperty("X-IG-Connection-Type", "WIFI");
+//        httpConnection.setRequestProperty("X-IG-Capabilities", "3ToAAA==");
 
         httpConnection.setDoOutput(true);
 
@@ -181,7 +180,6 @@ public class FXMLDocumentController implements Initializable {
         dataStreamFromUrl.close();
         System.out.println("Response: " + dataFromUrl);
 
-
         System.out.println("After geting and closing httpconnection");
         result = true;
         return result;
@@ -197,4 +195,14 @@ public class FXMLDocumentController implements Initializable {
         System.out.println("encrypted output is >>" + output);
         return output;
     }
+
+    public static String randomAlphaNumeric(int count) {
+        StringBuilder builder = new StringBuilder();
+        while (count-- != 0) {
+            int character = (int) (Math.random() * ALPHA_NUMERIC_STRING.length());
+            builder.append(ALPHA_NUMERIC_STRING.charAt(character));
+        }
+        return builder.toString();
+    }
+
 }

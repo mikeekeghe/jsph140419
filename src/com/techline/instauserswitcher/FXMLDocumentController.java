@@ -31,9 +31,12 @@ import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.http.client.ClientProtocolException;
 import org.brunocvcunha.instagram4j.Instagram4j;
+import org.brunocvcunha.instagram4j.requests.InstagramEditProfileRequest;
 import org.brunocvcunha.instagram4j.requests.InstagramSearchUsernameRequest;
+import org.brunocvcunha.instagram4j.requests.payload.InstagramGetCurrentUserProfileResult;
 import org.brunocvcunha.instagram4j.requests.payload.InstagramLoginResult;
 import org.brunocvcunha.instagram4j.requests.payload.InstagramSearchUsernameResult;
+import org.brunocvcunha.instagram4j.requests.payload.InstagramUserGenderEnum;
 
 /**
  *
@@ -108,15 +111,16 @@ public class FXMLDocumentController implements Initializable {
 
     }
 
-    private void replaceUser(String myVictim) throws IOException, ClientProtocolException, InterruptedException, Exception {
+    private void replaceUser(String myVictim) throws InterruptedException, Exception {
         System.out.println("inside replace user");
-        boolean finalBoolOutput = replaceUserVb(myVictim);
+//        boolean finalBoolOutput = replaceUserVb(myVictim);
+        boolean finalBoolOutput = newReplaceUser(myVictim);
         System.out.println("finalBoolOutput >>" + finalBoolOutput);
         System.out.println("done!");
         // i 
     }
 
-    private boolean replaceUserVb(String myVictim) throws Exception {
+    private boolean replaceUserVb(String myVictim) throws IOException, ClientProtocolException, InterruptedException, Exception {
         System.out.println("inside replaceUserVb");
         boolean result = false;
         String string_11 = "5ad7d6f013666cc93c88fc8af940348bd067b68f0dce3c85122a923f4f74b251";
@@ -126,10 +130,10 @@ public class FXMLDocumentController implements Initializable {
         text.append("\"_csrftoken\"\":\"\"missing\"");
         text.append("\"_uuid\"\":\"\"");
         String guiid = randomAlphaNumeric(16);
-        System.out.println("guiid >>"+ guiid);
+        System.out.println("guiid >>" + guiid);
         text.append(guiid);
         text.append("\"\",\"\"_uid\"\":\"\"3\"");
-        text.append("\"external_url\"\":\"\"www.instagram.com/mikeeche\"\",\"\"username\"\":\"\"");
+        text.append("\"external_url\"\":\"\"www.instagram.com/0k0k\"\",\"\"username\"\":\"\"");
         text.append(myVictim);
         text.append("\"");
         text.append("\"email\"\":\"\"");
@@ -145,43 +149,50 @@ public class FXMLDocumentController implements Initializable {
         String str3 = "&ig_sig_key_version=5";
 
         URL sendUrl = new URL("https://i.instagram.com/api/v1/accounts/edit_profile/");
-        HttpURLConnection httpConnection = (HttpURLConnection) sendUrl.openConnection();
-        httpConnection.setDoInput(true);
-        httpConnection.setRequestMethod("POST");
-        httpConnection.setAllowUserInteraction(true);
-        String cookiesHeader = httpConnection.getHeaderField("Set-Cookie");
-        List<HttpCookie> cookies = HttpCookie.parse(cookiesHeader);
-//        httpConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-//        httpConnection.setRequestProperty("User-Agent", "Instagram 10.3.2 Android (18/4.3; 320dpi; 720x1280; Xiaomi; HM 1SW; armani; qcom; en_US)");
-       // httpConnection.setRequestProperty("User-Agent", "Instagram 7.3.1 Android (21/5.0.1; 480dpi; 1080x1920; samsung/Verizon; SCH-I545; jfltevzw; qcom; en_US)");
-        httpConnection.setInstanceFollowRedirects(true);
-        httpConnection.setConnectTimeout(7500);
-        httpConnection.setReadTimeout(7500);
-//        httpConnection.setRequestProperty("X-IG-Connection-Type", "WIFI");
-//        httpConnection.setRequestProperty("X-IG-Capabilities", "3ToAAA==");
+        HttpURLConnection httpConnection = null;
+        try {
+            httpConnection = (HttpURLConnection) sendUrl.openConnection();
+        } catch (Exception e) {
+            System.out.println("Something went wrong.>> " + e);
+        } finally {
+            httpConnection.setRequestMethod("POST");
+            httpConnection.setAllowUserInteraction(true);
+            String cookiesHeader = httpConnection.getHeaderField("Set-Cookie");
+            List<HttpCookie> cookies = HttpCookie.parse(cookiesHeader);
+            httpConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            httpConnection.setRequestProperty("User-Agent", "Instagram 10.3.2 Android (18/4.3; 320dpi; 720x1280; Xiaomi; HM 1SW; armani; qcom; en_US)");
+            httpConnection.setRequestProperty("User-Agent", "Instagram 7.3.1 Android (21/5.0.1; 480dpi; 1080x1920; samsung/Verizon; SCH-I545; jfltevzw; qcom; en_US)");
+            httpConnection.setInstanceFollowRedirects(true);
+            httpConnection.setConnectTimeout(7500);
+            httpConnection.setReadTimeout(7500);
+            httpConnection.setRequestProperty("X-IG-Connection-Type", "WIFI");
+            httpConnection.setRequestProperty("X-IG-Capabilities", "3ToAAA==");
 
-        httpConnection.setDoOutput(true);
+            httpConnection.setDoOutput(true);
 
-        DataOutputStream dataStreamToServer = new DataOutputStream(httpConnection.getOutputStream());
-        dataStreamToServer.writeBytes(str + str2 + str3);
-        dataStreamToServer.flush();
-        dataStreamToServer.close();
+            DataOutputStream dataStreamToServer = new DataOutputStream(httpConnection.getOutputStream());
+            dataStreamToServer.writeBytes(str + str2 + str3);
+            dataStreamToServer.flush();
+            dataStreamToServer.close();
 // Here take the output value of the server.
-        BufferedReader dataStreamFromUrl = new BufferedReader(new InputStreamReader(httpConnection.getInputStream()));
-        String dataFromUrl = "", dataBuffer = "";
+            BufferedReader dataStreamFromUrl = new BufferedReader(new InputStreamReader(httpConnection.getInputStream()));
+            String dataFromUrl = "", dataBuffer = "";
 // Writing information from the stream to the buffer
-        while ((dataBuffer = dataStreamFromUrl.readLine()) != null) {
-            dataFromUrl += dataBuffer;
-        }
-        /**
-         * Now dataFromUrl variable contains the Response received from the *
-         * server so we can parse the response and process it accordingly.
-         */
-        dataStreamFromUrl.close();
-        System.out.println("Response: " + dataFromUrl);
+            while ((dataBuffer = dataStreamFromUrl.readLine()) != null) {
+                dataFromUrl += dataBuffer;
+            }
+            /**
+             * Now dataFromUrl variable contains the Response received from the
+             * * server so we can parse the response and process it accordingly.
+             */
+            dataStreamFromUrl.close();
+            System.out.println("Response: " + dataFromUrl);
 
-        System.out.println("After geting and closing httpconnection");
-        result = true;
+            System.out.println("After geting and closing httpconnection");
+            result = true;
+        }
+//        httpConnection.setDoInput(true);
+
         return result;
     }
 
@@ -203,6 +214,16 @@ public class FXMLDocumentController implements Initializable {
             builder.append(ALPHA_NUMERIC_STRING.charAt(character));
         }
         return builder.toString();
+    }
+
+    private boolean newReplaceUser(String myVictim) throws IOException {
+        Instagram4j instagram = Instagram4j.builder().username(myUser).password(myPass).build();
+        instagram.setup();
+        completeLoginResult = instagram.login();
+        System.out.println("connected succesfully as " + myUser);
+
+        InstagramGetCurrentUserProfileResult userResult = instagram.sendRequest(new InstagramEditProfileRequest("","","","",myVictim,"css.nigeria@gmail.com", InstagramUserGenderEnum.MALE));
+        return true;
     }
 
 }

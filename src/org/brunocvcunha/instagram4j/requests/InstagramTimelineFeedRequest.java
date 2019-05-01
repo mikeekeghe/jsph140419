@@ -15,39 +15,50 @@
  */
 package org.brunocvcunha.instagram4j.requests;
 
+import org.brunocvcunha.instagram4j.requests.InstagramGetRequest;
 import org.brunocvcunha.instagram4j.requests.payload.InstagramFeedResult;
 
-import lombok.AllArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
 /**
- * User Feed Request
+ * Timeline Feed Request
  * 
  * @author Bruno Candido Volpato da Cunha
  *
  */
-@AllArgsConstructor
-@RequiredArgsConstructor
-public class InstagramUserFeedRequest extends InstagramGetRequest<InstagramFeedResult> {
+public class InstagramTimelineFeedRequest extends InstagramGetRequest<InstagramFeedResult> {
 
-    @NonNull
-    private long userId;
     private String maxId;
-    private long minTimestamp;
-    private long maxTimestamp;
     
+    public InstagramTimelineFeedRequest() {
+    }
+
+    public InstagramTimelineFeedRequest(String maxId) {
+        this.maxId = maxId;
+    }
     
     @Override
     public String getUrl() {
-        return "feed/user/" + userId + "/?max_id=" + maxId + "&min_timestamp=" + minTimestamp + "&max_timestamp=" + maxTimestamp + "&rank_token=" + api.getRankToken() + "&ranked_content=true&";
+        String url = "feed/timeline/";
+        if (maxId != null && !maxId.isEmpty()) {
+            url += "&max_id=" + maxId;
+        }
+        
+        return url;
     }
 
     @Override
-    @SneakyThrows
+    public String getPayload() {
+        return null;
+    }
+
+    @Override
     public InstagramFeedResult parseResult(int statusCode, String content) {
-        return parseJson(statusCode, content, InstagramFeedResult.class);
+        try {
+            return this.parseJson(statusCode, content, InstagramFeedResult.class);
+        } catch (Throwable var4) {
+            throw var4;
+        }
     }
 
 }

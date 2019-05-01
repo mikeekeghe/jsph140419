@@ -21,9 +21,6 @@ import java.util.Map;
 import org.brunocvcunha.instagram4j.requests.payload.InstagramPostCommentResult;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -54,11 +51,7 @@ public class InstagramPostCommentRequest extends InstagramPostRequest<InstagramP
         Map<String, Object> likeMap = new LinkedHashMap<>();
         likeMap.put("_uuid", api.getUuid());
         likeMap.put("_uid", api.getUserId());
-        try {
-            likeMap.put("_csrftoken", api.getOrFetchCsrf());
-        } catch (IOException ex) {
-            Logger.getLogger(InstagramPostCommentRequest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        likeMap.put("_csrftoken", api.getOrFetchCsrf());
         likeMap.put("comment_text", commentText);
         
         ObjectMapper mapper = new ObjectMapper();

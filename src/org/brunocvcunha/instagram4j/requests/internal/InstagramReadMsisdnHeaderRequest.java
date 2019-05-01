@@ -22,9 +22,6 @@ import org.brunocvcunha.instagram4j.requests.InstagramPostRequest;
 import org.brunocvcunha.instagram4j.requests.payload.StatusResult;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -51,12 +48,7 @@ public class InstagramReadMsisdnHeaderRequest extends InstagramPostRequest<Statu
         
         Map<String, Object> likeMap = new LinkedHashMap<>();
         likeMap.put("device_id", api.getUuid());
-        try {
-            likeMap.put("_csrftoken", api.getOrFetchCsrf());
-            System.out.println("generated csfr token is "+ api.getOrFetchCsrf());
-        } catch (IOException ex) {
-            Logger.getLogger(InstagramReadMsisdnHeaderRequest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        likeMap.put("_csrftoken", api.getOrFetchCsrf());
         
         ObjectMapper mapper = new ObjectMapper();
         String payloadJson = mapper.writeValueAsString(likeMap);

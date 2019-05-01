@@ -17,7 +17,7 @@ package org.brunocvcunha.instagram4j.requests.payload;
 
 import java.util.List;
 
-//import org.brunocvcunha.instagram4j.storymetadata.StoryPollItem;
+import org.brunocvcunha.instagram4j.storymetadata.StoryPollItem;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -50,7 +50,7 @@ public class InstagramItem extends StatusResult{
     //private InstagramMedia media;
     //private InstagramStory stories;
     private List<Integer> media_ids;
-//    private List<StoryPollItem> story_polls;
+    private List<StoryPollItem> story_polls;
     private int media_id;
     private String thumbnail_urls;
     private String large_urls;

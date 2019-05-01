@@ -34,14 +34,13 @@ import lombok.ToString;
 @ToString(callSuper = true)
 @Builder
 public class InstagramLoginPayload {
-
     private String username;
     private String phone_id;
     private String _csrftoken;
     private String guid;
     private String device_id;
     private String password;
-    private final int login_attempt_account = 0;
+    private int login_attempt_account = 0;
     
 
 }

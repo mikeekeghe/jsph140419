@@ -19,16 +19,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.brunocvcunha.instagram4j.InstagramConstants;
 import org.brunocvcunha.instagram4j.requests.InstagramPostRequest;
 import org.brunocvcunha.instagram4j.requests.payload.StatusResult;
+import org.brunocvcunha.inutils4j.MyImageUtils;
 
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -56,11 +54,7 @@ public class InstagramExposeRequest extends InstagramPostRequest<StatusResult> {
         likeMap.put("_uuid", api.getUuid());
         likeMap.put("_uid", api.getUserId());
         likeMap.put("id", api.getUserId());
-        try {
-            likeMap.put("_csrftoken", api.getOrFetchCsrf());
-        } catch (IOException ex) {
-            Logger.getLogger(InstagramExposeRequest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        likeMap.put("_csrftoken", api.getOrFetchCsrf());
         likeMap.put("experiment", "ig_android_profile_contextual_feed");
 
         ObjectMapper mapper = new ObjectMapper();

@@ -18,7 +18,6 @@ package org.brunocvcunha.instagram4j.requests;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.core.JsonGenerator;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -91,7 +90,7 @@ public abstract class InstagramRequest<T> {
      * @return Result
      */
     @SneakyThrows
-    public <U> U parseJson(int statusCode, String str, Class<U> clazz) throws InstantiationException, IOException, IllegalAccessException {
+    public <U> U parseJson(int statusCode, String str, Class<U> clazz) {
         
         if (clazz.isAssignableFrom(StatusResult.class)) {
             
@@ -119,17 +118,21 @@ public abstract class InstagramRequest<T> {
      * @return Result
      */
     @SneakyThrows
-    public <U> U parseJson(String str, Class<U> clazz) throws IOException {
+    public <U> U parseJson(String str, Class<U> clazz) {
         
-         
+        if (log.isInfoEnabled()) {
+            
+            if (log.isDebugEnabled()) {
+                log.debug("Reading " + clazz.getSimpleName() + " from " + str);
+            } else {
                 String printStr = str;
                 if (printStr.length() > 128) {
                     printStr = printStr.substring(0, 128);
                 }
-                System.out.println("Reading " + clazz.getSimpleName() + " from " + printStr);
-         
+                log.info("Reading " + clazz.getSimpleName() + " from " + printStr);
+            }
             
-
+        }
         
         ObjectMapper objectMapper = new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -145,7 +148,7 @@ public abstract class InstagramRequest<T> {
      * @return Result
      */
     @SneakyThrows
-    public T parseJson(InputStream is, Class<T> clazz) throws IOException {
+    public T parseJson(InputStream is, Class<T> clazz) {
         return this.parseJson(MyStreamUtils.readContent(is), clazz);
     }
 
@@ -155,7 +158,5 @@ public abstract class InstagramRequest<T> {
     public boolean isSigned() {
         return true;
     }
-
-
     
 }

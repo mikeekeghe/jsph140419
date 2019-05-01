@@ -28,8 +28,11 @@ import lombok.SneakyThrows;
  * @author Bruno Candido Volpato da Cunha
  *
  */
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class InstagramGetUserFollowersRequest extends InstagramGetRequest<InstagramGetUserFollowersResult> {
 
+    @NonNull
     private long userId;
     private String maxId;
 

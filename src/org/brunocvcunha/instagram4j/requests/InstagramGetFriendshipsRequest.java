@@ -23,9 +23,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.brunocvcunha.instagram4j.requests.payload.InstagramGetFriendshipsResult;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -58,13 +55,7 @@ public class InstagramGetFriendshipsRequest extends InstagramPostRequest<Instagr
         Map<String, Object> payloadMap = new LinkedHashMap<>();
         payloadMap.put("_uuid", api.getUuid());
         payloadMap.put("user_ids", StringUtils.join(userIds, ","));
-        try {
-            payloadMap.put("_csrftoken", api.getOrFetchCsrf());
-        } catch (IOException ex) {
-            Logger.getLogger(InstagramGetFriendshipsRequest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(InstagramGetFriendshipsRequest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        payloadMap.put("_csrftoken", api.getOrFetchCsrf());
         
         String payloadJson = mapper.writeValueAsString(payloadMap);
 

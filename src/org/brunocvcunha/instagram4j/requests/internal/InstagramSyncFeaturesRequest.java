@@ -23,9 +23,6 @@ import org.brunocvcunha.instagram4j.requests.InstagramPostRequest;
 import org.brunocvcunha.instagram4j.requests.payload.InstagramSyncFeaturesResult;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -59,11 +56,7 @@ public class InstagramSyncFeaturesRequest extends InstagramPostRequest<Instagram
         if (!preLogin) {
             likeMap.put("_uuid", api.getUuid());
             likeMap.put("_uid", api.getUserId());
-            try {
-                likeMap.put("_csrftoken", api.getOrFetchCsrf());
-            } catch (IOException ex) {
-                Logger.getLogger(InstagramSyncFeaturesRequest.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            likeMap.put("_csrftoken", api.getOrFetchCsrf());
             
         }
         

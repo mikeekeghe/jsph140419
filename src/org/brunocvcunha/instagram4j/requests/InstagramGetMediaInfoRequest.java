@@ -18,7 +18,7 @@ package org.brunocvcunha.instagram4j.requests;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-//import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.brunocvcunha.instagram4j.requests.payload.InstagramGetMediaInfoResult;
 import org.brunocvcunha.instagram4j.requests.payload.InstagramGetMediaLikersResult;
 

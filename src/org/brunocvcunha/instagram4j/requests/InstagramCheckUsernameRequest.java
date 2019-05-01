@@ -16,12 +16,9 @@
 package org.brunocvcunha.instagram4j.requests;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.brunocvcunha.instagram4j.requests.payload.InstagramCheckUsernameResult;
 
@@ -55,11 +52,7 @@ public class InstagramCheckUsernameRequest extends InstagramPostRequest<Instagra
         
         Map<String, Object> payloadMap = new LinkedHashMap<>();
         payloadMap.put("username", username);
-        try {
-            payloadMap.put("_csrftoken", api.getOrFetchCsrf());
-        } catch (IOException ex) {
-            Logger.getLogger(InstagramCheckUsernameRequest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        payloadMap.put("_csrftoken", api.getOrFetchCsrf());
         
         String payloadJson = mapper.writeValueAsString(payloadMap);
 

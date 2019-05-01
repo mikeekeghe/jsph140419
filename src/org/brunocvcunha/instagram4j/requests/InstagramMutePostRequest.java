@@ -16,7 +16,6 @@
 package org.brunocvcunha.instagram4j.requests;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j;
@@ -24,8 +23,6 @@ import org.brunocvcunha.instagram4j.requests.payload.InstagramPostCommentResult;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Comment Post Request
@@ -51,11 +48,7 @@ public class InstagramMutePostRequest extends InstagramPostRequest<InstagramPost
         Map<String, Object> likeMap = new LinkedHashMap<>();
         likeMap.put("_uuid", api.getUuid());
         likeMap.put("_uid", api.getUserId());
-        try {
-            likeMap.put("_csrftoken", api.getOrFetchCsrf());
-        } catch (IOException ex) {
-            Logger.getLogger(InstagramMutePostRequest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        likeMap.put("_csrftoken", api.getOrFetchCsrf());
         likeMap.put("target_posts_author_id", userId);
         ObjectMapper mapper = new ObjectMapper();
         String payloadJson = mapper.writeValueAsString(likeMap);

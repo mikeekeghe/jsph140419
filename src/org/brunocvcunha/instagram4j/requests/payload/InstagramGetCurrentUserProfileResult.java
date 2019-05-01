@@ -15,30 +15,26 @@
  */
 package org.brunocvcunha.instagram4j.requests.payload;
 
-import lombok.Builder;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 /**
- * Login Payload
- * @author Ozan Karaali
- *
+ * @author Alexander Kohonovsky
+ * @since 2019-04-28
  */
 @Getter
 @Setter
 @ToString(callSuper = true)
-@Builder
-public class InstagramLoginTwoFactorPayload {
-    private String username;
-    private String phone_id;
-    private String _csrftoken;
-    private String guid;
-    private String device_id;
-    private String verification_code;
-    private String two_factor_identifier;
-    private String password;
-    private int login_attempt_account = 0;
-    
+public class InstagramGetCurrentUserProfileResult extends StatusResult {
+
+    private InstagramCurrentUserProfile user;
+
+    /**
+     * Can be a nested object or string
+     */
+    @JsonProperty("message")
+    private Object messages;
 
 }

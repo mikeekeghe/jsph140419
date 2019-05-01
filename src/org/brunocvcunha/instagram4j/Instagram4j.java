@@ -17,7 +17,6 @@ package org.brunocvcunha.instagram4j;
 
 import java.io.IOException;
 import java.io.Serializable;
-import static java.lang.System.out;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -40,7 +39,7 @@ import org.brunocvcunha.instagram4j.requests.InstagramGetRecentActivityRequest;
 import org.brunocvcunha.instagram4j.requests.InstagramLoginRequest;
 import org.brunocvcunha.instagram4j.requests.InstagramLoginTwoFactorRequest;
 import org.brunocvcunha.instagram4j.requests.InstagramRequest;
-//import org.brunocvcunha.instagram4j.requests.InstagramTimelineFeedRequest;
+import org.brunocvcunha.instagram4j.requests.InstagramTimelineFeedRequest;
 import org.brunocvcunha.instagram4j.requests.internal.InstagramFetchHeadersRequest;
 import org.brunocvcunha.instagram4j.requests.internal.InstagramLogAttributionRequest;
 import org.brunocvcunha.instagram4j.requests.internal.InstagramReadMsisdnHeaderRequest;
@@ -59,13 +58,13 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j;
 
-
 /**
  * 
  * Instagram4j API
  * @author Bruno Candido Volpato da Cunha
  *
  */
+@Log4j
 public class Instagram4j implements Serializable {
     
     @Getter
@@ -144,7 +143,7 @@ public class Instagram4j implements Serializable {
      * Setup some variables
      */
     public void setup() {
-        System.out.println("Setup...");
+        log.info("Setup...");
         
         if (StringUtils.isEmpty(this.username)) {
             throw new IllegalArgumentException("Username is mandatory.");
@@ -168,7 +167,7 @@ public class Instagram4j implements Serializable {
             this.cookieStore = new BasicCookieStore();
         }
         
-        System.out.println("Device ID is: " + this.deviceId + ", random id: " + this.uuid);
+        log.info("Device ID is: " + this.deviceId + ", random id: " + this.uuid);
         HttpClientBuilder builder = HttpClientBuilder.create();
         if (proxy != null) {
             builder.setProxy(proxy);
@@ -182,9 +181,9 @@ public class Instagram4j implements Serializable {
      * @throws IOException 
      * @throws ClientProtocolException 
      */
-    public InstagramLoginResult login() throws ClientProtocolException, IOException, InterruptedException {
+    public InstagramLoginResult login() throws ClientProtocolException, IOException {
 
-        System.out.println("Logging with user " + username + " and password " + password.replaceAll("[a-zA-Z0-9]", "*"));
+        log.info("Logging with user " + username + " and password " + password.replaceAll("[a-zA-Z0-9]", "*"));
 
 
         this.sendRequest(new InstagramReadMsisdnHeaderRequest());
@@ -198,7 +197,7 @@ public class Instagram4j implements Serializable {
                 .guid(uuid)
                 .device_id(deviceId)
                 .phone_id(InstagramGenericUtil.generateUuid(true))
-               // .login_attempt_account(0)
+                .login_attempt_account(0)
                 ._csrftoken(getOrFetchCsrf())
                 .build();
         InstagramLoginRequest req = new InstagramLoginRequest(loginRequest);
@@ -208,26 +207,25 @@ public class Instagram4j implements Serializable {
         if (loginResult.getTwo_factor_info() != null) {
             identifier = loginResult.getTwo_factor_info().getTwo_factor_identifier();
         } else if (loginResult.getChallenge() != null) {
-           //logic for challenge
-            System.out.println("Challenge required: " + loginResult.getChallenge());
+            // logic for challenge
+            log.info("Challenge required: " + loginResult.getChallenge());
         }
         
         return loginResult;
     }
 
-    public InstagramLoginResult login(String verificationCode) throws ClientProtocolException, IOException, InterruptedException {
+    public InstagramLoginResult login(String verificationCode) throws ClientProtocolException, IOException {
         if (identifier == null) {
             login();
         }
-        InstagramLoginTwoFactorPayload loginRequest;
-        loginRequest = InstagramLoginTwoFactorPayload.builder().username(username)
+        InstagramLoginTwoFactorPayload loginRequest = InstagramLoginTwoFactorPayload.builder().username(username)
                 .verification_code(verificationCode)
                 .two_factor_identifier(identifier)
                 .password(password)
                 .guid(uuid)
                 .device_id(deviceId)
                 .phone_id(InstagramGenericUtil.generateUuid(true))
-                //.login_attempt_account(0)
+                .login_attempt_account(0)
                 ._csrftoken(getOrFetchCsrf())
                 .build();
         InstagramLoginTwoFactorRequest req = new InstagramLoginTwoFactorRequest(loginRequest);
@@ -241,7 +239,7 @@ public class Instagram4j implements Serializable {
      * @throws ClientProtocolException
      * @throws IOException
      */
-    public String getOrFetchCsrf() throws ClientProtocolException, IOException, InterruptedException {
+    public String getOrFetchCsrf() throws ClientProtocolException, IOException {
         Optional<Cookie> checkCookie = getCsrfCookie();
         if (!checkCookie.isPresent()) {
             sendRequest(new InstagramFetchHeadersRequest());
@@ -261,9 +259,9 @@ public class Instagram4j implements Serializable {
      * @throws IOException 
      * @throws ClientProtocolException 
      */
-    public <T> T sendRequest(InstagramRequest<T> request) throws ClientProtocolException, IOException, InterruptedException {
+    public <T> T sendRequest(InstagramRequest<T> request) throws ClientProtocolException, IOException {
         
-        System.out.println("Sending request: " + request.getClass().getName());
+        log.info("Sending request: " + request.getClass().getName());
 
         if (!this.isLoggedIn
                 && request.requiresLogin()) {
@@ -276,12 +274,12 @@ public class Instagram4j implements Serializable {
         request.setApi(this);
         T response = request.execute();
         
-        System.out.println("Result for " + request.getClass().getName() + ": " + response);
+        log.debug("Result for " + request.getClass().getName() + ": " + response);
         
         return response;
     }
 
-    private void emulateUserLoggedIn(InstagramLoginResult loginResult) throws IOException, ClientProtocolException, InterruptedException {
+    private void emulateUserLoggedIn(InstagramLoginResult loginResult) throws IOException {
         if (loginResult.getStatus().equalsIgnoreCase("ok")) {
             this.userId = loginResult.getLogged_in_user().getPk();
             this.rankToken = this.userId + "_" + this.uuid;
@@ -289,15 +287,14 @@ public class Instagram4j implements Serializable {
 
             this.sendRequest(new InstagramSyncFeaturesRequest(false));
             this.sendRequest(new InstagramAutoCompleteUserListRequest());
-//            this.sendRequest(new InstagramTimelineFeedRequest());
+            this.sendRequest(new InstagramTimelineFeedRequest());
             this.sendRequest(new InstagramGetInboxRequest());
             this.sendRequest(new InstagramGetRecentActivityRequest());
         }
     }
     
     @SneakyThrows
-    private void randomWait() throws InterruptedException {
+    private void randomWait() {
         Thread.sleep(MyNumberUtils.randomLongBetween(100, 250));
     }
-    
- }
+}

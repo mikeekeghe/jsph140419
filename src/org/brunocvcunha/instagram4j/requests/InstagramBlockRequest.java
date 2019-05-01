@@ -16,12 +16,9 @@
 package org.brunocvcunha.instagram4j.requests;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.brunocvcunha.instagram4j.requests.payload.StatusResult;
 
@@ -54,11 +51,7 @@ public class InstagramBlockRequest extends InstagramPostRequest<StatusResult> {
         likeMap.put("_uuid", api.getUuid());
         likeMap.put("_uid", api.getUserId());
         likeMap.put("user_id", userId);
-        try {
-            likeMap.put("_csrftoken", api.getOrFetchCsrf());
-        } catch (IOException ex) {
-            Logger.getLogger(InstagramBlockRequest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        likeMap.put("_csrftoken", api.getOrFetchCsrf());
         
         ObjectMapper mapper = new ObjectMapper();
         String payloadJson = mapper.writeValueAsString(likeMap);

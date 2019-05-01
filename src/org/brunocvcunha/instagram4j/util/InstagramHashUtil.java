@@ -143,7 +143,7 @@ public class InstagramHashUtil {
      * @return Signed string
      */
     @SneakyThrows
-    public static String generateSignature(String payload) throws UnsupportedEncodingException {
+    public static String generateSignature(String payload) {
         String parsedData = URLEncoder.encode(payload, "UTF-8");
 
         String signedBody = generateHash(InstagramConstants.API_KEY, payload);

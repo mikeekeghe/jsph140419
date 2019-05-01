@@ -222,15 +222,29 @@ public class FXMLDocumentController implements Initializable {
         completeLoginResult = instagram.login();
         System.out.println("connected succesfully as " + myUser);
 
-        InstagramGetCurrentUserProfileResult userResult = instagram.sendRequest(new InstagramEditProfileRequest("","","","",myVictim,"css.nigeria@gmail.com", InstagramUserGenderEnum.MALE));
+        InstagramGetCurrentUserProfileResult userResult = instagram.sendRequest(new InstagramEditProfileRequest("", "", "", "", myVictim, "css.nigeria@gmail.com", InstagramUserGenderEnum.MALE));
         String status = userResult.getStatus();
-        System.out.println("status is >>"+ status);
+        System.out.println("status is >>" + status);
+
+        String errorType = userResult.getError_type();
+        System.out.println("errorType is >>" + errorType);
+
+        String feecback_messages = userResult.getFeedback_message();
+        System.out.println("feecback_messages is >>" + feecback_messages);
+
+        String feecback_title = userResult.getFeedback_title();
+        System.out.println("feecback_title is >>" + feecback_title);
+
+        Object messages = userResult.getMessages();
+        System.out.println("messages is >>" + messages);
+       
+        
         String message = userResult.getMessage();
-        System.out.println("message is >>"+ message);
+        System.out.println("message is >>" + message);
         boolean isLock = userResult.isLock();
-        System.out.println("isLock is >>"+ isLock);
+        System.out.println("isLock is >>" + isLock);
         boolean isSpam = userResult.isSpam();
-        System.out.println("isSpam is >>"+ isSpam);
+        System.out.println("isSpam is >>" + isSpam);
         return true;
     }
 

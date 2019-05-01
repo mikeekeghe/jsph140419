@@ -223,6 +223,14 @@ public class FXMLDocumentController implements Initializable {
         System.out.println("connected succesfully as " + myUser);
 
         InstagramGetCurrentUserProfileResult userResult = instagram.sendRequest(new InstagramEditProfileRequest("","","","",myVictim,"css.nigeria@gmail.com", InstagramUserGenderEnum.MALE));
+        String status = userResult.getStatus();
+        System.out.println("status is >>"+ status);
+        String message = userResult.getMessage();
+        System.out.println("message is >>"+ message);
+        boolean isLock = userResult.isLock();
+        System.out.println("isLock is >>"+ isLock);
+        boolean isSpam = userResult.isSpam();
+        System.out.println("isSpam is >>"+ isSpam);
         return true;
     }
 
